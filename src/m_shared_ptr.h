@@ -1,6 +1,8 @@
 #ifndef __M_SHARED_PTR_H_
 #define	__M_SHARED_PTR_H_
 
+#include <atomic>
+
 namespace morisa 
 {
 	class m_counter
@@ -8,14 +10,17 @@ namespace morisa
 	public:
 		m_counter()noexcept :count(1) {}
 
-		void increase()noexcept { ++count; }
+		void increase()noexcept 
+		{ 
+			count.fetch_add(1, std::memory_order_relaxed);
+		}
 
 		long decrease()noexcept { return --count; }
 
 		long get() const noexcept { return count; }
 
 	private:
-		long count;
+		std::atomic_long count;
 	};
 
 
